@@ -6,7 +6,7 @@ button, input, textarea, select { font: inherit; }
 button:not(:disabled), summary { cursor: pointer; }
 button:disabled { cursor: wait; opacity: .6; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-.coach-screen { width: 100%; max-width: 375px; min-height: max(667px, 100svh); margin: 0 auto; padding: 24px; display: flex; flex-direction: column; }
+.coach-screen { width: 100%; max-width: 375px; min-width: 0; min-height: max(667px, 100svh); margin: 0 auto; padding: 24px; display: flex; flex-direction: column; overflow-x: clip; }
 .coach-header { display: flex; align-items: center; justify-content: space-between; min-height: 18px; }
 .coach-header > span { font-size: 12px; font-weight: 700; letter-spacing: .1em; line-height: 16px; }
 .coach-header a { color: var(--ink-muted); font-size: 14px; text-decoration: none; }
@@ -23,7 +23,7 @@ button:disabled { cursor: wait; opacity: .6; }
 .coach-levels label:has(input:checked) { background: var(--accent); font-weight: 600; }
 .coach-levels label:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; }
 .coach-levels input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.coach-form { display: flex; flex-direction: column; flex: 1; }
+.coach-form { display: flex; flex-direction: column; flex: 1; width: 100%; min-width: 0; }
 .coach-button { display: block; width: 100%; border: 0; border-radius: 16px; background: var(--ink); color: var(--page); padding: 16px; text-align: center; font-size: 16px; line-height: 24px; font-weight: 600; text-decoration: none; }
 .coach-button.yellow { background: var(--accent); color: var(--ink); }
 .coach-footer { margin-top: auto; padding-top: 24px; }
@@ -44,9 +44,9 @@ button:disabled { cursor: wait; opacity: .6; }
 .coach-details ol { padding-left: 20px; margin-top: 12px; display: grid; gap: 12px; }
 .coach-count { margin-top: 32px; color: var(--ink-muted); font-size: 12px; line-height: 16px; letter-spacing: .1em; font-weight: 700; }
 .coach-question { font-size: 24px; line-height: 32px; margin-top: 8px; font-weight: 700; }
-.practice-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; flex: 1; }
+.practice-track { display: flex; position: relative; width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; flex: 1; }
 .practice-track::-webkit-scrollbar { display: none; }
-.practice-slide { border: 0; margin: 0; padding: 0; min-width: 100%; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; }
+.practice-slide { border: 0; margin: 0; padding: 0; min-inline-size: 0; width: 100%; flex: 0 0 100%; scroll-snap-align: start; display: flex; flex-direction: column; overflow-wrap: anywhere; }
 .practice-slide + .practice-slide { margin-left: 24px; }
 .practice-choice { display: block; padding: 16px; background: var(--surface); border-radius: 16px; line-height: 24px; cursor: pointer; }
 .practice-choice:has(input:checked) { background: var(--accent); font-weight: 600; }

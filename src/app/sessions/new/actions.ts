@@ -49,6 +49,7 @@ export async function saveMaterial(input: {
 /** Demo path: builds a session from the bundled sample material. */
 export async function useSample(): Promise<never> {
   const text = await readFile(path.join(process.cwd(), "fixtures", "sample-material.md"), "utf8");
-  const session = await createSession({ kind: "text", title: "Sample material", text });
+  const title = text.match(/^#\s+(.+)$/m)?.[1] ?? "Episode notes";
+  const session = await createSession({ kind: "text", title, text });
   redirect(`/sessions/${session.id}/material`);
 }
