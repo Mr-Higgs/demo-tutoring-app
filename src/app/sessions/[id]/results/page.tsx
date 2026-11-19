@@ -19,11 +19,13 @@ async function Results({ id }: { id: string }) {
   const correct = session.results.items.filter(item => item.result === "right").length;
   const strong = correct >= 4;
   const sample = session.material.title === "Lenny's Podcast: prioritization";
+  const problemFirstQuestion = questions.find(question => question.position === 2);
+  const problemFirstCorrect = problemFirstQuestion && byId.get(problemFirstQuestion.id)?.result === "right";
   const missed = questions.find(question => byId.get(question.id)?.result !== "right");
   const focus = session.material.key_ideas.find(idea => idea.id === missed?.key_idea_id)?.title;
   return <CoachShell back={`/sessions/${id}/practice`}>
     <div data-step="results-summary"><h1 className="coach-title">{strong ? "Strong call." : "Keep practicing."}</h1>
-    <p className="mt-2">{sample ? (byId.get("q2")?.result === "right" ? "Starting with the problem keeps the roadmap honest." : "Start with the problem before committing to a solution.") : (strong ? "You connected the notes to your next product decision." : "Revisit the source notes, then bring one takeaway into your next decision.")}</p>
+    <p className="mt-2">{sample ? (problemFirstCorrect ? "Starting with the problem keeps the roadmap honest." : "Start with the problem before committing to a solution.") : (strong ? "You connected the notes to your next product decision." : "Revisit the source notes, then bring one takeaway into your next decision.")}</p>
     <div className="coach-card mt-6"><p className="coach-label">This session</p><p className="coach-score">{correct} of {questions.length}</p></div>
     <div className="coach-card mt-3"><p className="coach-label">Practice next</p><p className="coach-value">{sample ? "Saying no to stakeholders" : focus ?? "Apply one takeaway from every episode"}</p></div></div>
     <details className="coach-details"><summary>Review your answers</summary><div className="coach-review">{questions.map(question => {
