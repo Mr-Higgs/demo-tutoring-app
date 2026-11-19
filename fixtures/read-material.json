@@ -1,0 +1,26 @@
+{
+  "title": "Lenny's Podcast: prioritization",
+  "summary": "Start with the problem, compare impact and effort, make trade-offs visible, and test your riskiest assumption before committing.",
+  "key_ideas": [
+    {
+      "title": "Start with the problem",
+      "explanation": "Ask what customer or business problem a request solves before changing the roadmap."
+    },
+    {
+      "title": "Compare impact and effort",
+      "explanation": "Compare options against a shared outcome, confidence in the evidence and the effort required."
+    },
+    {
+      "title": "Make trade-offs visible",
+      "explanation": "Every new commitment displaces something else; agree on the opportunity cost."
+    },
+    {
+      "title": "Test the riskiest assumption",
+      "explanation": "Use a small experiment to learn before committing to a full build."
+    },
+    {
+      "title": "Align stakeholders",
+      "explanation": "Acknowledge the need, explain the trade-off, and agree on what would change the decision."
+    }
+  ]
+}

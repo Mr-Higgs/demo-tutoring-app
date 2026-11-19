@@ -1,0 +1,69 @@
+{
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "key_idea_id": "k2",
+      "prompt": "Two ideas compete for the next sprint. How do you choose which to explore?",
+      "choices": {
+        "A": "Build the easier idea first",
+        "B": "Compare customer impact, evidence and effort",
+        "C": "Pick the idea with the most votes"
+      },
+      "answer": "B",
+      "explanation": "Use the same outcome, confidence and effort assumptions to compare opportunities.",
+      "hint": "Start with impact, not popularity."
+    },
+    {
+      "type": "multiple_choice",
+      "key_idea_id": "k1",
+      "prompt": "Your CEO wants a feature next week. Your roadmap is full. What do you do first?",
+      "choices": {
+        "A": "Say yes and shift the roadmap",
+        "B": "Ask what problem it solves",
+        "C": "Say no, the roadmap is set"
+      },
+      "answer": "B",
+      "explanation": "Starting with the problem keeps the roadmap honest.",
+      "hint": "Separate the request from the need behind it."
+    },
+    {
+      "type": "multiple_choice",
+      "key_idea_id": "k3",
+      "prompt": "An urgent request will delay your launch. What should you make visible?",
+      "choices": {
+        "A": "Who asked for it",
+        "B": "How busy the team is",
+        "C": "The outcome gained and the work displaced"
+      },
+      "answer": "C",
+      "explanation": "Making the opportunity cost visible lets stakeholders choose a trade-off deliberately.",
+      "hint": "What does saying yes mean saying no to?"
+    },
+    {
+      "type": "multiple_choice",
+      "key_idea_id": "k4",
+      "prompt": "Your team loves a solution, but demand is uncertain. What is the best next step?",
+      "choices": {
+        "A": "Run a small test of the riskiest assumption",
+        "B": "Build the complete feature",
+        "C": "Ask the team to vote"
+      },
+      "answer": "A",
+      "explanation": "A small experiment tests the risky assumption before you invest in a full build.",
+      "hint": "Choose learning before commitment."
+    },
+    {
+      "type": "multiple_choice",
+      "key_idea_id": "k5",
+      "prompt": "A stakeholder pushes back when you decline a feature. How do you respond?",
+      "choices": {
+        "A": "Repeat that the roadmap is final",
+        "B": "Agree on the need and explain the trade-off",
+        "C": "Promise a date to end the discussion"
+      },
+      "answer": "B",
+      "explanation": "You can say no to a solution while still taking the underlying need seriously.",
+      "hint": "Keep the shared outcome in the conversation."
+    }
+  ]
+}

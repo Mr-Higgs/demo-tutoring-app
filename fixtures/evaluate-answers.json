@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "result": "right",
+      "feedback": "You chose evidence before commitment. Use that reasoning in the next roadmap discussion."
+    },
+    {
+      "result": "almost",
+      "feedback": "Name the customer problem, then make the trade-off explicit."
+    },
+    {
+      "result": "not_yet",
+      "feedback": "Pause before committing. Identify the need and the work that would be displaced."
+    }
+  ],
+  "summary": "Bring the problem, the evidence and the trade-off into your next product decision.",
+  "next_steps": [
+    "Saying no to stakeholders",
+    "Test the riskiest assumption before building"
+  ]
+}
