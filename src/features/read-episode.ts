@@ -20,12 +20,15 @@ export async function readEpisode(file: File, onProgress: (message: string) => v
       const doc = await task.promise;
       if (doc.numPages > MAX_PAGES) throw new Error("Use at most 20 pages per session.");
       const paragraphs: string[] = [];
+      let needsOcr = false;
       for (let page = 1; page <= doc.numPages; page++) {
         const content = await (await doc.getPage(page)).getTextContent();
-        paragraphs.push(content.items.map(item => "str" in item ? item.str + (item.hasEOL ? "\n" : " ") : "").join(""));
+        const text = content.items.map(item => "str" in item ? item.str + (item.hasEOL ? "\n" : " ") : "").join("");
+        if (text.trim().length < 40) needsOcr = true;
+        paragraphs.push(text);
       }
       const text = paragraphs.join("\n").trim();
-      if (text.length >= 40) return { title, text, pages: doc.numPages };
+      if (!needsOcr && text.length >= 40) return { title, text, pages: doc.numPages };
     } finally {
       await task.destroy();
     }
