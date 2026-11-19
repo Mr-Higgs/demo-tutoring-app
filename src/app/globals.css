@@ -1,12 +1,63 @@
 @import "tailwindcss";
 @import "../theme/theme.css";
-
-body {
-  background: var(--page);
-  color: var(--ink);
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); }
+button, input, textarea, select { font: inherit; }
+button:not(:disabled), summary { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .6; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.coach-screen { width: 100%; max-width: 375px; min-height: max(667px, 100svh); margin: 0 auto; padding: 24px; display: flex; flex-direction: column; }
+.coach-header { display: flex; align-items: center; justify-content: space-between; min-height: 18px; }
+.coach-header > span { font-size: 12px; font-weight: 700; letter-spacing: .1em; line-height: 16px; }
+.coach-header a { color: var(--ink-muted); font-size: 14px; text-decoration: none; }
+.coach-back { color: var(--ink-muted); font-size: 14px; border: 0; background: transparent; padding: 0; }
+.coach-title { font-size: 30px; line-height: 36px; font-weight: 700; margin-top: 32px; }
+.coach-intro { margin-top: 8px; color: var(--ink-muted); font-size: 16px; line-height: 24px; }
+.coach-stack { display: grid; gap: 12px; margin-top: 24px; }
+.coach-card { background: var(--surface); border: 0; border-radius: 16px; padding: 16px; text-align: left; }
+.coach-label { display: block; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+.coach-value { font-size: 16px; line-height: 24px; font-weight: 600; }
+.coach-card input { display: block; width: 100%; color: var(--ink); border: 0; padding: 0; background: transparent; font-weight: 600; line-height: 24px; }
+.coach-levels { display: flex; gap: 8px; border: 0; padding: 0; }
+.coach-levels label { border-radius: 999px; background: var(--surface); padding: 8px 12px; font-size: 14px; line-height: 20px; cursor: pointer; }
+.coach-levels label:has(input:checked) { background: var(--accent); font-weight: 600; }
+.coach-levels label:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; }
+.coach-levels input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.coach-form { display: flex; flex-direction: column; flex: 1; }
+.coach-button { display: block; width: 100%; border: 0; border-radius: 16px; background: var(--ink); color: var(--page); padding: 16px; text-align: center; font-size: 16px; line-height: 24px; font-weight: 600; text-decoration: none; }
+.coach-button.yellow { background: var(--accent); color: var(--ink); }
+.coach-footer { margin-top: auto; padding-top: 24px; }
+.coach-drop { display: block; margin-top: 24px; border: 2px dashed var(--ink-muted); padding: 24px; border-radius: 16px; text-align: center; cursor: pointer; }
+.coach-drop.dragging { border-color: var(--ink); background: var(--surface); }
+.coach-drop p { line-height: 24px; }
+.coach-drop small { display: block; color: var(--ink-muted); font-size: 14px; line-height: 20px; }
+.coach-added { width: 100%; margin-top: 16px; }
+.coach-paste { margin-top: 16px; font-size: 14px; color: var(--ink-muted); }
+.coach-paste textarea, .coach-paste input { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 8px; background: var(--surface); color: var(--ink); }
+.coach-upload-list { display: grid; gap: 8px; margin-top: 16px; }
+.coach-upload-item { display: flex; gap: 8px; align-items: center; justify-content: space-between; overflow-wrap: anywhere; }
+.coach-upload-item button { border: 0; background: transparent; padding: 4px; }
+.coach-error { margin-top: 12px; color: var(--danger); font-size: 14px; }
+.coach-help { margin-top: 8px; font-size: 12px; color: var(--ink-muted); }
+.coach-details { margin-top: 16px; font-size: 14px; }
+.coach-details summary { color: var(--ink-muted); }
+.coach-details ol { padding-left: 20px; margin-top: 12px; display: grid; gap: 12px; }
+.coach-count { margin-top: 32px; color: var(--ink-muted); font-size: 12px; line-height: 16px; letter-spacing: .1em; font-weight: 700; }
+.coach-question { font-size: 24px; line-height: 32px; margin-top: 8px; font-weight: 700; }
+.practice-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; flex: 1; }
+.practice-track::-webkit-scrollbar { display: none; }
+.practice-slide { border: 0; margin: 0; padding: 0; min-width: 100%; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; }
+.practice-slide + .practice-slide { margin-left: 24px; }
+.practice-choice { display: block; padding: 16px; background: var(--surface); border-radius: 16px; line-height: 24px; cursor: pointer; }
+.practice-choice:has(input:checked) { background: var(--accent); font-weight: 600; }
+.practice-choice:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: -3px; }
+.practice-choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.coach-score { font-size: 24px; line-height: 32px; font-weight: 700; }
+.coach-review { display: grid; gap: 12px; margin-top: 12px; }
+.coach-review p + p { margin-top: 8px; }
+@media (max-width: 359px) {
+  .coach-screen { padding: 20px; }
+  .coach-levels { gap: 4px; }
+  .coach-levels label { padding: 8px 10px; }
 }
-
-:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }

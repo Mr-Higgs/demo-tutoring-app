@@ -2,21 +2,20 @@
   "items": [
     {
       "result": "right",
-      "feedback": "You explained it in your own words — that's real understanding. Keep it up!"
+      "feedback": "You chose evidence before commitment. Use that reasoning in the next roadmap discussion."
     },
     {
       "result": "almost",
-      "feedback": "You've got the right idea, and one small part needs another look. Say the number out loud and try once more."
+      "feedback": "Name the customer problem, then make the trade-off explicit."
     },
     {
       "result": "not_yet",
-      "feedback": "This one is still tricky, and that's okay — it's the idea to practice next. Look at the model answer and see where it differs from yours."
+      "feedback": "Pause before committing. Identify the need and the work that would be displaced."
     }
   ],
-  "summary": "Nice work — you finished the whole set. You clearly know that a digit's place decides what it's worth, and comparing numbers is getting easier.",
+  "summary": "Bring the problem, the evidence and the trade-off into your next product decision.",
   "next_steps": [
-    "Practice expanded form with 3-digit numbers.",
-    "Try comparing numbers where the ones digit is bigger in the smaller number.",
-    "Say numbers out loud to hear the places."
+    "Saying no to stakeholders",
+    "Test the riskiest assumption before building"
   ]
 }

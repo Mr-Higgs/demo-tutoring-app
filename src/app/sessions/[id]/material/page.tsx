@@ -1,85 +1,25 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ButtonLink, Card, Notice, PageShell } from "@/components/ui";
-import { getSession, pageUrl } from "@/lib/store";
+import { getSession } from "@/lib/store";
+import { CoachShell } from "@/features/CoachShell";
 import { ReadingMaterial } from "./ReadingMaterial";
-
 export const metadata: Metadata = { title: "What I'm studying" };
-
-// Screen 2 of 4, continued: the app reads the material, then shows its summary
-// and the key ideas it will build practice from.
 export default function MaterialPage({ params }: PageProps<"/sessions/[id]/material">) {
-  return (
-    <Suspense
-      fallback={
-        <PageShell title="What I'm studying">
-          <p className="text-ink-muted">Loading…</p>
-        </PageShell>
-      }
-    >
-      {params.then(({ id }) => <Material id={id} />)}
-    </Suspense>
-  );
+  return <Suspense fallback={<CoachShell><p>Reading notes…</p></CoachShell>}>{params.then(({ id }) => <Material id={id} />)}</Suspense>;
 }
-
 async function Material({ id }: { id: string }) {
   const session = await getSession(id);
   if (!session) notFound();
-  const { material } = session;
-  const ready = material.status === "ready";
-  const pages = Array.from({ length: material.page_count }, (_, i) => i + 1);
-
-  return (
-    <PageShell
-      title={material.title || "What I'm studying"}
-      intro="Step 2 of 4: what the app found in the material."
-    >
-      <div className="grid gap-6">
-        {!ready ? (
-          <ReadingMaterial sessionId={id} status={material.status} error={material.error} />
-        ) : (
-          <>
-            {material.summary && (
-              <Notice title="In short">
-                <p>{material.summary}</p>
-              </Notice>
-            )}
-            <Card title={`Key ideas (${material.key_ideas.length})`} aside="Practice comes from these">
-              <ol className="grid gap-3">
-                {material.key_ideas.map((k, i) => (
-                  <li key={k.id} className="flex gap-3">
-                    <span className="font-display font-semibold text-accent">{i + 1}.</span>
-                    <span>
-                      <span className="font-medium text-ink">{k.title}.</span>{" "}
-                      <span className="text-ink-muted">{k.explanation}</span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </Card>
-            <div>
-              <ButtonLink href={`/sessions/${id}/practice`} size="lg" data-step="start-practice">
-                Start practice
-              </ButtonLink>
-            </div>
-          </>
-        )}
-
-        {pages.length > 0 && (
-          <Card title="Pages">
-            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {pages.map((n) => (
-                <li key={n} className="overflow-hidden rounded-control border border-line bg-surface-muted">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={pageUrl(id, n)} alt={`Page ${n}`} className="aspect-square w-full object-contain" />
-                  <p className="px-2 py-1 text-xs text-ink-muted">Page {n}</p>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        )}
-      </div>
-    </PageShell>
-  );
+  const ready = session.material.status === "ready";
+  return <CoachShell back="/sessions/new">
+    <h1 className="coach-title">What are we learning from?</h1><p className="coach-intro">Add notes from a podcast episode.</p>
+    <Link className="coach-drop" href="/sessions/new"><p className="font-semibold">Drop episode notes</p><small>PDF, text or a photo</small></Link>
+    <div className="coach-card coach-added"><p className="coach-label">Added</p><p className="coach-value">{session.material.title || "Episode notes"}</p></div>
+    {!ready ? <div className="mt-4"><ReadingMaterial sessionId={id} status={session.material.status} error={session.material.error} /></div> : <>
+      <details className="coach-details"><summary>What we&apos;ll practice · about 7 minutes</summary><p className="mt-3">{session.material.summary}</p><ol>{session.material.key_ideas.map(idea => <li key={idea.id}><strong>{idea.title}</strong><p>{idea.explanation}</p></li>)}</ol></details>
+      <div className="coach-footer"><Link className="coach-button" data-step="start-practice" href={`/sessions/${id}/practice`}>Next</Link></div>
+    </>}
+  </CoachShell>;
 }

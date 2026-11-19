@@ -1,14 +1,17 @@
-Place value — class notes
+# Lenny's Podcast: prioritization
+Demo practice notes inspired by common product-management frameworks, not a verbatim podcast transcript.
 
-Every digit in a number has a place, and the place tells you what the digit
-is worth. In 345, the 3 is in the hundreds place, so it means 300. The 4 is
-in the tens place, so it means 40. The 5 is in the ones place, so it means 5.
+## Start with the problem
+When a CEO requests a feature, first ask what customer or business problem it solves. A full roadmap is a set of bets, not a reason to ignore new evidence.
 
-A number like 345 is really 300 + 40 + 5. That is called expanded form.
+## Compare impact and effort
+Prioritize the smallest opportunity with credible evidence of meaningful customer impact. Compare options using the same outcome, confidence and effort assumptions.
 
-When you compare two numbers, start at the biggest place. 462 is bigger than
-449 because 6 tens is more than 4 tens — it doesn't matter that 9 is bigger
-than 2 in the ones place.
+## Make trade-offs visible
+Saying yes means saying no to something else. Explain the opportunity cost and agree on the outcome before moving a date.
 
-You can also regroup: 10 ones makes 1 ten, and 10 tens makes 1 hundred. So
-14 tens is the same as 1 hundred and 4 tens, or 140.
+## Test the riskiest assumption
+Run the smallest experiment that could change your decision before committing to a full build.
+
+## Align stakeholders
+Say no to the solution without dismissing the underlying need. Agree on the problem and explain the trade-off using evidence.

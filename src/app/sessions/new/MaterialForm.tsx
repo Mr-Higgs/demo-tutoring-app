@@ -1,132 +1,61 @@
 "use client";
-
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
-import { Button, Notice } from "@/components/ui";
-import { mission } from "@mission";
-import { MAX_FILES, MAX_PAGES, PrepError, preparePages } from "@/lib/upload/prepare";
-import { saveMaterial, startSession } from "./actions";
+import { MAX_EPISODES, MAX_NOTE_CHARACTERS, type EpisodeNotes } from "@/features/episode-practice";
+import { useSample as openSample } from "./actions";
+import { createEpisodeSession } from "./episode-actions";
 
-const ACCEPTS: Record<string, string> = {
-  photo: "image/jpeg,image/png,image/webp,image/heic,image/heif",
-  pdf: "application/pdf",
-};
-
-type Status = { kind: "idle" } | { kind: "working"; message: string } | { kind: "error"; message: string };
-
-export function MaterialForm({ kinds }: { kinds: string[] }) {
+export function MaterialForm() {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
-  const [status, setStatus] = useState<Status>({ kind: "idle" });
-  const working = status.kind === "working";
-  const allowText = kinds.includes("text");
-  const fileKinds = kinds.filter((k) => k !== "text");
-  const accept = fileKinds.flatMap((k) => (ACCEPTS[k] ?? "").split(",")).filter(Boolean).join(",");
-
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const text = String(form.get("text") ?? "").trim();
-    if (!text && !files.length) {
-      return setStatus({ kind: "error", message: "Add some text or choose a photo or PDF first." });
-    }
-
-    let sessionId: string | undefined;
-    try {
-      setStatus({ kind: "working", message: "Starting the session…" });
-      const started = await startSession();
-      if ("error" in started) throw new PrepError(started.error);
-      sessionId = started.sessionId;
-
-      let pageCount = 0;
-      if (files.length) {
-        const pages = await preparePages(files, (done, total) =>
-          setStatus({ kind: "working", message: `Preparing files (${Math.min(done + 1, total)} of ${total})…` }),
-        );
-        for (const [i, page] of pages.entries()) {
-          setStatus({ kind: "working", message: `Uploading page ${i + 1} of ${pages.length}…` });
-          const res = await fetch(`/api/sessions/${sessionId}/pages/${i + 1}`, {
-            method: "POST",
-            headers: { "Content-Type": "image/jpeg" },
-            body: page.blob,
-          });
-          if (!res.ok) throw new PrepError(`Page ${i + 1} (${page.label}) didn't upload. Check your connection and try again.`);
-        }
-        pageCount = pages.length;
-      }
-
-      setStatus({ kind: "working", message: "Saving…" });
-      const saved = await saveMaterial({ sessionId, text, pageCount });
-      if ("error" in saved) throw new PrepError(saved.error);
-    } catch (e) {
-      const message = e instanceof PrepError ? e.message : "Something went wrong. Please try again.";
-      setStatus({ kind: "error", message });
-      return;
-    }
-    router.push(`/sessions/${sessionId}/material`);
+  const [notes, setNotes] = useState("");
+  const [title, setTitle] = useState("");
+  const [error, setError] = useState("");
+  const [progress, setProgress] = useState("");
+  const [dragging, setDragging] = useState(false);
+  const [pending, startTransition] = useTransition();
+  function addFiles(incoming: File[]) {
+    setError("");
+    if (incoming.length + files.length + (notes.trim() ? 1 : 0) > MAX_EPISODES) { setError("Choose up to 5 episodes per session."); return; }
+    setFiles(current => [...current, ...incoming]);
   }
-
-  return (
-    <form onSubmit={onSubmit} className="grid gap-5">
-      {allowText && (
-        <div className="grid gap-2">
-          <label htmlFor="text" className="text-sm font-medium text-ink">
-            {mission.material.prompt}
-          </label>
-          <textarea
-            id="text"
-            name="text"
-            rows={7}
-            disabled={working}
-            placeholder={mission.material.examples}
-            className="rounded-control border border-line bg-surface px-3 py-2 text-ink placeholder:text-ink-muted focus:border-accent"
-          />
-          <p className="text-sm text-ink-muted">{mission.material.examples}</p>
-        </div>
-      )}
-
-      {fileKinds.length > 0 && (
-        <div className="grid gap-2">
-          <label htmlFor="files" className="text-sm font-medium text-ink">
-            {allowText ? "…or upload" : mission.material.prompt}
-          </label>
-          <input
-            id="files"
-            type="file"
-            multiple
-            accept={accept}
-            disabled={working}
-            onChange={(e) => {
-              setFiles(Array.from(e.target.files ?? []).slice(0, MAX_FILES));
-              setStatus({ kind: "idle" });
-            }}
-            className="rounded-control border border-dashed border-line bg-surface-muted p-4 text-sm text-ink file:mr-3 file:rounded-control file:border-0 file:bg-accent file:px-3 file:py-2 file:text-accent-ink"
-          />
-          <p className="text-sm text-ink-muted">
-            {[
-              fileKinds.includes("photo") ? "photos or screenshots" : "",
-              fileKinds.includes("pdf") ? "a PDF" : "",
-            ]
-              .filter(Boolean)
-              .join(" or ")}
-            ; up to {MAX_FILES} files, {MAX_PAGES} pages total.
-          </p>
-          {files.length > 0 && (
-            <ul className="text-sm text-ink-muted">
-              {files.map((f) => (
-                <li key={f.name + f.size}>• {f.name}</li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
-      {status.kind === "error" && <Notice tone="danger">{status.message}</Notice>}
-      {status.kind === "working" && <Notice>{status.message}</Notice>}
-
-      <Button type="submit" size="lg" disabled={working}>
-        {working ? "Working…" : "Continue"}
-      </Button>
-    </form>
-  );
+  function sample() { startTransition(async () => { await openSample(); }); }
+  function next() {
+    setError("");
+    if (!files.length && !notes.trim()) { sample(); return; }
+    startTransition(async () => {
+      try {
+        const episodes: EpisodeNotes[] = [];
+        let pages = 0;
+        if (files.length) {
+          const { readEpisode } = await import("@/features/read-episode");
+          for (const file of files) {
+            setProgress(`Reading ${file.name}…`);
+            const episode = await readEpisode(file, setProgress);
+            pages += episode.pages;
+            if (pages > 20) throw new Error("Use at most 20 pages across all episodes.");
+            episodes.push({ title: episode.title, text: episode.text });
+          }
+        }
+        if (notes.trim()) episodes.push({ title: title.trim() || "Pasted episode notes", text: notes });
+        if (episodes.reduce((sum, episode) => sum + episode.text.length, 0) > MAX_NOTE_CHARACTERS) throw new Error("Keep the combined notes under 20,000 characters. Nothing has been saved.");
+        setProgress("Preparing five questions across your episodes…");
+        const result = await createEpisodeSession(episodes);
+        if ("error" in result) { setError(result.error); return; }
+        router.push(`/sessions/${result.sessionId}/material`);
+      } catch (cause) { setError(cause instanceof Error ? cause.message : "Couldn't read that file. Try pasting the notes instead."); }
+      finally { setProgress(""); }
+    });
+  }
+  return <form className="coach-form" onSubmit={event => { event.preventDefault(); next(); }}>
+    <label className={`coach-drop ${dragging ? "dragging" : ""}`} htmlFor="episode-files" onDragOver={event => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={event => { event.preventDefault(); setDragging(false); if (!pending) addFiles(Array.from(event.dataTransfer.files)); }}>
+      <p className="font-semibold">Drop episode notes</p><small>PDF, text or a photo</small>
+    </label>
+    <input id="episode-files" className="sr-only" aria-label="Upload episode notes" type="file" accept=".txt,.md,.pdf,image/jpeg,image/png,image/webp" multiple disabled={pending} onChange={event => { addFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
+    {!files.length && !notes.trim() ? <button className="coach-card coach-added" type="button" data-step="use-sample" disabled={pending} onClick={sample} aria-label="Use sample: Lenny's Podcast: prioritization"><span className="coach-label">Added</span><span className="coach-value">Lenny&apos;s Podcast: prioritization</span></button> : <div className="coach-upload-list">{files.map((file, index) => <div className="coach-card coach-upload-item" key={`${file.name}-${index}`}><div><span className="coach-label">Episode {index + 1}</span><p className="coach-value">{file.name}</p></div><button type="button" disabled={pending} aria-label={`Remove ${file.name}`} onClick={() => setFiles(current => current.filter((_, i) => i !== index))}>×</button></div>)}</div>}
+    <details className="coach-paste"><summary>Add multiple episodes or paste notes</summary><p className="coach-help">Up to 5 episodes · 20 pages · 20,000 characters total. Five questions across every episode, about 7 minutes.</p><label>Episode title<input value={title} maxLength={120} disabled={pending} onChange={event => setTitle(event.target.value)} /></label><label>Episode notes<textarea rows={4} value={notes} maxLength={MAX_NOTE_CHARACTERS} disabled={pending} placeholder="Paste a few complete sentences from an episode…" onChange={event => setNotes(event.target.value)} /></label><p className="coach-help">PDF and text stay in your browser until extracted. English photo reading may download a language model; paste notes if it cannot load.</p></details>
+    {error && <p className="coach-error" role="alert">{error}</p>}
+    {pending && <p className="coach-help" role="status">{progress || "Opening the sample…"}</p>}
+    <div className="coach-footer"><button className="coach-button" type="submit" disabled={pending}>{pending ? "Reading notes…" : "Next"}</button></div>
+  </form>;
 }

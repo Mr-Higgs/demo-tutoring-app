@@ -22,25 +22,25 @@ export interface MissionConfig {
 }
 
 export const mission: MissionConfig = {
-  appName: "Learning Mission",
-  tagline: "Practice built around one learner, from what they're studying.",
+  appName: "PM COACH",
+  tagline: "Turn podcast notes into frameworks you can use at work. Five scenarios in under 10 minutes.",
   learner: {
-    name: "Alex",
-    persona: "a 3rd grader who gets discouraged by long worksheets",
-    goal: "feel confident on next week's quiz",
+    name: "Mia",
+    persona: "Product manager",
+    goal: "Frameworks I can use at work",
   },
-  topic: "place value",
-  level: "beginner",
+  topic: "product management frameworks",
+  level: "advanced",
   material: {
     kinds: ["text", "photo", "pdf"],
-    prompt: "What is Alex studying?",
-    examples: "e.g. class notes, a textbook page, or a photo of a worksheet about place value",
+    prompt: "What are we learning from?",
+    examples: "Podcast episode notes: PDF, text or a photo",
   },
   practice: {
-    questionTypes: ["multiple_choice", "fill_in", "short_answer"],
+    questionTypes: ["multiple_choice"],
     count: 5,
   },
-  feedback: { tone: "encouraging" },
-  features: ["read-aloud"],
-  theme: { accent: "#00d8ff" },
+  feedback: { tone: "direct" },
+  features: [],
+  theme: { accent: "#FFD02F" },
 };

@@ -1,45 +1,12 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Button, Card, PageShell } from "@/components/ui";
 import { getProfile } from "@/lib/store";
-import { mission } from "@mission";
+import { CoachShell } from "@/features/CoachShell";
 import { MaterialForm } from "./MaterialForm";
-import { useSample } from "./actions";
-
 export const metadata: Metadata = { title: "What I'm studying" };
-
-// Screen 2 of 4: the material to practice from — pasted text and/or photos or
-// a PDF, or the bundled sample material.
-export default function NewSessionPage() {
-  return (
-    <PageShell
-      title="What I'm studying"
-      intro={`Step 2 of 4: ${mission.material.prompt}`}
-    >
-      <Card className="max-w-xl">
-        <Suspense fallback={<p className="text-ink-muted">Loading…</p>}>
-          <MaterialGate />
-        </Suspense>
-      </Card>
-    </PageShell>
-  );
-}
-
+export default function NewSessionPage() { return <Suspense fallback={<CoachShell><p>Loading…</p></CoachShell>}><MaterialGate /></Suspense>; }
 async function MaterialGate() {
-  const profile = await getProfile();
-  if (!profile) redirect("/onboard");
-  return (
-    <div className="grid gap-5">
-      <MaterialForm kinds={mission.material.kinds} />
-      <div className="rounded-control border border-line bg-surface-muted p-4">
-        <p className="mb-2 text-sm text-ink-muted">Nothing handy? Try the bundled sample material.</p>
-        <form action={useSample}>
-          <Button variant="secondary" type="submit" data-step="use-sample">
-            Use the sample material
-          </Button>
-        </form>
-      </div>
-    </div>
-  );
+  if (!await getProfile()) redirect("/onboard");
+  return <CoachShell back="/onboard"><h1 className="coach-title">What are we learning from?</h1><p className="coach-intro">Add notes from a podcast episode.</p><MaterialForm /></CoachShell>;
 }
