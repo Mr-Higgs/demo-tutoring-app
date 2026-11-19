@@ -14,6 +14,6 @@ async function Practice({ id }: { id: string }) {
   const session = await getSession(id);
   if (!session) notFound();
   if (session.material.status !== "ready") redirect(`/sessions/${id}/material`);
-  if (session.practice.status !== "ready") return <CoachShell back={`/sessions/${id}/material`}><h1 className="coach-title">Practice</h1><div className="mt-6"><StartingPractice sessionId={id} status={session.practice.status} error={session.practice.error} count={mission.practice.count} /></div></CoachShell>;
+  if (session.practice.status !== "ready") return <CoachShell back={`/sessions/${id}/material`}><h1 className="coach-title">Practice</h1><div className="mt-6"><StartingPractice sessionId={id} status={session.practice.status} error={session.practice.error} count={mission.practice.count} startedAt={session.practice.started_at} /></div></CoachShell>;
   return <PracticeFlow sessionId={id} questions={[...session.practice.questions].sort((a,b) => a.position - b.position)} answers={session.answers} />;
 }

@@ -6,9 +6,11 @@ import { Button, Notice } from "@/components/ui";
 import type { JobStatus } from "@/lib/store";
 
 /** Shown on screen 4 until the answers are marked; starts it, waits, offers a retry. */
-export function EvaluatingAnswers({ sessionId, status, error }: { sessionId: string; status: JobStatus; error: string | null }) {
+export function EvaluatingAnswers({ sessionId, status, error, startedAt }: { sessionId: string; status: JobStatus; error: string | null; startedAt: string | null }) {
   const router = useRouter();
   const [seconds, setSeconds] = useState(0);
+  const [openedAt] = useState(Date.now);
+  const stale = status === "working" && openedAt + seconds * 1000 - Date.parse(startedAt ?? "") >= 5 * 60 * 1000;
   const [requestFailed, setRequestFailed] = useState(false);
   const started = useRef(false);
 
@@ -55,6 +57,7 @@ export function EvaluatingAnswers({ sessionId, status, error }: { sessionId: str
   return (
     <Notice title="Marking your answers…">
       Seeing how each one went. This usually takes under a minute{seconds > 0 && ` (${seconds}s so far)`}.
+      {stale && <><p className="mt-3">This session may have been interrupted. Try again to resume.</p><Button className="mt-3" onClick={() => void start()}>Try again</Button></>}
     </Notice>
   );
 }

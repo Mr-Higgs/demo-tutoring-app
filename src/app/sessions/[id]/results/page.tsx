@@ -13,7 +13,7 @@ async function Results({ id }: { id: string }) {
   const session = await getSession(id);
   if (!session) notFound();
   if (session.practice.status !== "ready") redirect(`/sessions/${id}/practice`);
-  if (session.results.status !== "ready") return <CoachShell back={`/sessions/${id}/practice`}><h1 className="coach-title">How did I do</h1><div className="mt-6"><EvaluatingAnswers sessionId={id} status={session.results.status} error={session.results.error} /></div></CoachShell>;
+  if (session.results.status !== "ready") return <CoachShell back={`/sessions/${id}/practice`}><h1 className="coach-title">How did I do</h1><div className="mt-6"><EvaluatingAnswers sessionId={id} status={session.results.status} error={session.results.error} startedAt={session.results.started_at} /></div></CoachShell>;
   const questions = [...session.practice.questions].sort((a,b) => a.position - b.position);
   const byId = new Map(session.results.items.map(item => [item.question_id, item]));
   const correct = session.results.items.filter(item => item.result === "right").length;
