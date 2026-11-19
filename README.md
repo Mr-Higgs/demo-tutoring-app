@@ -47,11 +47,18 @@ The feature tests cover cross-episode coverage, grounding in unrelated uploaded 
 
 The starter routes, core modules and five `data-step` hooks are preserved. The under-ten-minute goal is a five-question design target, not a timer that cuts off the learner.
 
-After approval to ship:
+## Submission and walkthrough
+
+[Watch Mia's walkthrough](submission/demo.mp4) · [Miro gallery](https://miro.com/app/board/uXjVEMVnhvA=/?moveToWidget=3458764690946831945)
+
+The annotated walkthrough follows Mia from her Advanced setup through the sample material, five scenarios, a real 4 of 5 result, answer review and Practice again. The final phone screenshot is saved with the four standardized screen captures in `screenshots/`.
+
+To repeat the submission check and standardized recording with the app running:
 
 ```sh
 npm run check
+npx playwright install chromium
 npm run demo:record
 ```
 
-The standardized recorder writes `submission/demo.webm` and screenshots. These and local learner data are excluded from git.
+The standardized recorder writes `submission/demo.webm` and screenshots. Generated artifacts are ignored by default; this approved submission explicitly versions its walkthrough videos and screen captures. Local learner data stays excluded from git.
