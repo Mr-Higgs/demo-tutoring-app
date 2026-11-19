@@ -30,7 +30,7 @@ async function Results({ id }: { id: string }) {
     <div className="coach-card mt-3"><p className="coach-label">Practice next</p><p className="coach-value">{sample ? "Saying no to stakeholders" : focus ?? "Apply one takeaway from every episode"}</p></div></div>
     <details className="coach-details"><summary>Review your answers</summary><div className="coach-review">{questions.map(question => {
       const result = byId.get(question.id);
-      return <article className="coach-card" key={question.id}><h2 className="font-semibold">Scenario {question.position} · {result?.result === "right" ? "Right" : "Not yet"}</h2><p>{question.prompt}</p><p><strong>Your answer:</strong> {question.choices?.[session.answers[question.id]] ?? "No answer"}</p><p><strong>Best answer:</strong> {question.choices?.[question.answer] ?? question.answer}</p><p>{question.explanation}</p></article>;
+      return <article className="coach-card" key={question.id}><h2 className="font-semibold">Scenario {question.position} · {result?.result === "right" ? "Right" : "Not yet"}</h2><p>{question.prompt}</p><p><strong>Your answer:</strong> {question.choices?.[session.answers[question.id]] ?? session.answers[question.id] ?? "No answer"}</p><p><strong>Best answer:</strong> {question.choices?.[question.answer] ?? question.answer}</p><p>{question.explanation}</p></article>;
     })}</div></details>
     <div className="coach-footer"><Link className="coach-button yellow" href="/onboard">Practice again</Link></div>
   </CoachShell>;
