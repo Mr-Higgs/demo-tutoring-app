@@ -35,3 +35,29 @@ test("each generated right and wrong option is scored by the unchanged core", ()
     assert.equal(gradeByApp(question, wrong)?.result, "not_yet");
   });
 });
+
+test("structured markdown notes use real lessons, not headings, and other episodes as wrong answers", () => {
+  const note = (name: string, lessons: string[]) => ({
+    title: `2026-01-01-${name.toLowerCase()}`,
+    text: `---\ntitle: "${name} on product"\n---\n\n# ${name} on product\n> A short subtitle line for ${name}.\n\n## TL;DR\n\n${lessons.map(l => `- ${l}`).join("\n")}\n\n## Key ideas & frameworks\n\n- **Named idea** ([▶ 00:01:02](https://example.com/watch?t=62s)): ${name} explains why small bets beat big launches every time.\n\n## Chapters\n\n- 00:00 Intro to the whole conversation with the guest\n`,
+  });
+  const episodes = [
+    note("Alpha", ["Run pre-mortems before every major launch decision.", "Sort tasks by leverage before choosing what to polish."]),
+    note("Beta", ["Leaders should stay in the details of the work they review."]),
+    note("Gamma", ["Hire systems thinkers who build shared platforms for teams."]),
+  ];
+  const { questions, keyIdeas } = episodePractice(episodes);
+  assert.deepEqual(keyIdeas.map(k => k.title), ["Alpha on product", "Beta on product", "Gamma on product"]);
+  const all = JSON.stringify(questions);
+  for (const leak of ["# ", "**", "▶", "subtitle", "Intro to the whole"]) assert.ok(!all.includes(leak), leak);
+  const lessons = episodes.flatMap(e => e.text.split("\n").filter(l => l.startsWith("- ") && !l.includes("Intro")).map(l => l.slice(2)));
+  for (const q of questions) {
+    const source = episodes[keyIdeas.findIndex(k => k.id === q.key_idea_id)];
+    assert.ok(source.text.includes(q.choices![q.answer]));
+    for (const [letter, choice] of Object.entries(q.choices!)) {
+      if (letter === q.answer) continue;
+      assert.ok(!source.text.includes(choice), "a wrong answer came from the same episode");
+      assert.ok(lessons.some(l => l.includes(choice)), "wrong answers come from the other episodes' notes");
+    }
+  }
+});
